@@ -14,7 +14,7 @@ API = "Get your Api key from above web page"
 #we will find channel id by this link
 https://www.streamweasels.com/tools/youtube-channel-id-and-user-id-convertor/
 
-channel id
+Example chanel Id the Id will change every day:
 1 vjsidhu vlogs = 'UCJcCB-QYPIBcbKcBQOTwhiA'
 2 paridhabagal  = 'UCueYcgdqos0_PzNOq81zAFg'
 3 finally       = 'UCi3o8sgPl4-Yt501ShuiEgA'
