@@ -1,0 +1,92 @@
+# Import necessary libraries
+from googleapiclient.discovery import build
+import pandas as pd
+
+# Define your API key and YouTube service
+api_key = 'API KEY'
+youtube = build('youtube', 'v3', developerKey=api_key)
+
+# Function to get the uploads playlist ID for a given channel ID
+def get_uploads_playlist_id(channel_id):
+    request = youtube.channels().list(
+        part='contentDetails',
+        id=channel_id
+    )
+    response = request.execute()
+    if 'items' not in response:
+        print("Error: 'items' not found in the response")
+        print(response)
+        return None
+    return response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
+
+# Function to fetch all videos from the uploads playlist
+def get_all_videos_from_playlist(playlist_id):
+    videos = []
+    next_page_token = None
+
+    while True:
+        request = youtube.playlistItems().list(
+            part='snippet,contentDetails',
+            playlistId=playlist_id,
+            maxResults=50,
+            pageToken=next_page_token
+        )
+        response = request.execute()
+        if 'items' not in response:
+            print("Error: 'items' not found in the response")
+            print(response)
+            break
+        videos.extend(response['items'])
+        next_page_token = response.get('nextPageToken')
+
+        if not next_page_token:
+            break
+
+    return videos
+
+# Function to get video statistics
+def get_video_statistics(video_id):
+    request = youtube.videos().list(
+        part='statistics',
+        id=video_id
+    )
+    response = request.execute()
+    if 'items' not in response:
+        print(f"Error: 'items' not found in the response for video ID {video_id}")
+        print(response)
+        return None
+    return response['items'][0]['statistics']
+
+# Function to extract relevant details from the video data
+def extract_video_details(videos):
+    video_data = []
+
+    for video in videos:
+        video_id = video['contentDetails']['videoId']
+        title = video['snippet']['title']
+        published_at = video['snippet']['publishedAt']
+        statistics = get_video_statistics(video_id)
+        if statistics:
+            views = statistics.get('viewCount', 0)
+            likes = statistics.get('likeCount', 0)
+            comments = statistics.get('commentCount', 0)
+            video_data.append({
+                'video_id': video_id,
+                'title': title,
+                'published_at': published_at,
+                'views': views,
+                'likes': likes,
+                'comments': comments
+            })
+
+    return pd.DataFrame(video_data)
+
+# Main script
+if __name__ == "__main__":
+    channel_id = 'Channel ID'  # store the channel id
+    playlist_id = get_uploads_playlist_id(channel_id)
+    if playlist_id:
+        videos = get_all_videos_from_playlist(playlist_id)
+        if videos:
+            video_details_df = extract_video_details(videos)
+            print(video_details_df)
