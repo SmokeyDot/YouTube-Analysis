@@ -1,3 +1,6 @@
+1.you will open youtube folder in powerbi
+2.i have 5 sample data if you want many data you use source code
+
 #library install 
 !pip install virtualenv
 !pip install google-api-python-client oauth2client
@@ -6,7 +9,7 @@
 #create API by this link
 console.cloud.google.com
 
-API = AIzaSyD4H4nv1kirdMtHLPR1uVb5dNNeZRpy8uM
+API = "Get your Api key from above web page"
 
 #we will find channel id by this link
 https://www.streamweasels.com/tools/youtube-channel-id-and-user-id-convertor/
